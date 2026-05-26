@@ -1,24 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import TaskInput from "./components/TaskInput";
+import TaskList from "./components/TaskList";
 
 function App() {
   const [filter, setFilter] = useState("all");
   const [input,setInput] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   
-  function addTask(){
+  const handleAddTask = () => {
     if (input.trim() === "") return;
 
-    const newTask = {
+    setTasks([...tasks, {
       id: Date.now(),
       text: input,
       completed: false
-    };
+    }]);
 
-    setTasks([...tasks,newTask]);
     setInput("");
   }
 
-  function deleteTask(id){
+  function handleDeleteTask(id){
     const filteredTasks = tasks.filter(task => task.id !== id);
     setTasks(filteredTasks);
   }
@@ -43,30 +45,41 @@ function App() {
     return true;
   });
 
+  useEffect(()=> {
+    const savedTasks = localStorage.getItem("tasks");
+
+    if (savedTasks) {
+      setTasks(JSON.parse(savedTasks));
+    }
+
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+if (!isLoaded) return;
+
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+  },[tasks, isLoaded]);
+
   return (
     <div>
-      <h1>Todo App</h1>
+      <TaskInput
+        input={input}
+        setInput={setInput}
+        handleAddTask={handleAddTask}
+      />
 
-      <input type="text" name="" id="" value={input} onChange={(e) => setInput(e.target.value)}/>
+    <div>
+      <button onClick={() => setFilter("all")}>All</button>
+      <button onClick={() => setFilter("active")}>Active</button>
+      <button onClick={() => setFilter("completed")}>Completed</button>
+    </div>
 
-      <button onClick={addTask}>Add Task</button>
-
-      <div>
-        <button onClick={() => setFilter("all")}>All</button>
-        <button onClick={() => setFilter("active")}>Active</button>
-        <button onClick={() => setFilter("completed")}>Completed</button>
-      </div>
-
-      <ul>
-        {filteredTasks.map((task) => (
-          <li key={task.id}>
-            <span onClick={() => toggleTask(task.id)} style={{textDecoration: task.completed ? "line-through" : "none", cursor: "pointer"}}>
-              {task.text}
-            </span>
-
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-            </li>))}
-      </ul>
+      <TaskList
+        tasks={filteredTasks}
+        handleDeleteTask={handleDeleteTask}
+        toggleTask={toggleTask}
+      />
     </div>
   );
 }
