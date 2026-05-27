@@ -1,6 +1,10 @@
 import TaskItem from "./TaskItem";
 
+
 function TaskList({ tasks, handleDeleteTask, toggleTask}) {
+    if (tasks.length === 0) {
+        return <p style={{ textAlign: "center" }}>No tasks yet</p>;
+    }
     return (
         <ul>
             {tasks.map((task) => (
@@ -8,6 +12,8 @@ function TaskList({ tasks, handleDeleteTask, toggleTask}) {
             ))}
         </ul>
     );
+
+    
 }
 
 export default TaskList;

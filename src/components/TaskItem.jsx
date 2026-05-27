@@ -1,6 +1,18 @@
+import { useState} from "react";
+
 function TaskItem({ task, handleDeleteTask, toggleTask }) {
-    return (
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(task.text);  
+
+  function handleEditTask(id){
+    setIsEditing(!isEditing);
+  }
+  
+  return (
       <li>
+        {isEditing ? (
+          <input value={editText} onChange={(e) => setEditText(e.target.value)} />
+        ):(
         <span
           onClick={() => toggleTask(task.id)}
           style={{
@@ -10,7 +22,11 @@ function TaskItem({ task, handleDeleteTask, toggleTask }) {
         >
           {task.text}
         </span>
+        )}
   
+        <button onClick={() => handleEditTask(task.id)}>
+          Edit
+        </button>
         <button onClick={() => handleDeleteTask(task.id)}>
           Delete
         </button>

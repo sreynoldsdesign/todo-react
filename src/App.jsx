@@ -8,6 +8,7 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   
+  
   const handleAddTask = () => {
     if (input.trim() === "") return;
 
@@ -19,6 +20,8 @@ function App() {
 
     setInput("");
   }
+
+  
 
   function handleDeleteTask(id){
     const filteredTasks = tasks.filter(task => task.id !== id);
@@ -56,23 +59,22 @@ function App() {
   }, []);
 
   useEffect(() => {
-if (!isLoaded) return;
-
+    if (!isLoaded) return;
     localStorage.setItem("tasks",JSON.stringify(tasks));
   },[tasks, isLoaded]);
 
   return (
-    <div>
+    <div className="app-container">
       <TaskInput
         input={input}
         setInput={setInput}
         handleAddTask={handleAddTask}
       />
 
-    <div>
-      <button onClick={() => setFilter("all")}>All</button>
-      <button onClick={() => setFilter("active")}>Active</button>
-      <button onClick={() => setFilter("completed")}>Completed</button>
+    <div className="filter-buttons">
+      <button style= {{background: filter === "all" ? "#cbd5e1": ""}} onClick={() => setFilter("all")}>All</button>
+      <button style= {{background: filter === "active" ? "#cbd5e1": ""}} onClick={() => setFilter("active")}>Active</button>
+      <button style= {{background: filter === "completed" ? "#cbd5e1": ""}} onClick={() => setFilter("completed")}>Completed</button>
     </div>
 
       <TaskList
